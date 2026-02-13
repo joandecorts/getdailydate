@@ -35,6 +35,26 @@ jobs:
         run: |
           python full_scraper_resum_diari_final.py
 
+      - name: Collect outputs into repo
+        run: |
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          OUTSIDE_DIR="$(dirname "$GITHUB_WORKSPACE")/src/data"
+          INSIDE_DIR="$GITHUB_WORKSPACE/src/data"
+
+          echo "OUTSIDE_DIR=$OUTSIDE_DIR"
+          echo "INSIDE_DIR=$INSIDE_DIR"
+
+          mkdir -p "$INSIDE_DIR"
+
+          if [ -d "$OUTSIDE_DIR" ]; then
+            cp -f "$OUTSIDE_DIR"/* "$INSIDE_DIR"/ || true
+            echo "Contents inside repo after copy:"
+            ls -la "$INSIDE_DIR"
+          else
+            echo "Outside dir not found: $OUTSIDE_DIR"
+            exit 1
+          fi
+
       - name: Commit outputs (if any)
         run: |
           git config user.name "github-actions[bot]"
@@ -44,7 +64,7 @@ jobs:
           echo "__pycache__/" >> .gitignore || true
           echo "*.pyc" >> .gitignore || true
 
-          # IMPORTANT: els fitxers es guarden a src/data
+          # Afegeix outputs
           git add src/data/ .gitignore || true
 
           git commit -m "Update daily data" || echo "No changes"
