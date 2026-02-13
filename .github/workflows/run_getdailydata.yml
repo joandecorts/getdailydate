@@ -2,6 +2,8 @@ name: run-getdailydata
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "55 1 * * *"   # 02:55 CET (hivern). A l'estiu serà 03:55 CEST.
 
 permissions:
   contents: write
